@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpCode, Injectable } from '@nestjs/common';
 export interface Employee {
   id: number
   name: string
@@ -12,15 +12,35 @@ private employees: Employee[]= [
     {id:3, name:"Jane Smith", role:"Designer"}
 ]
 
+@HttpCode(200)
 getAllEmployees(): Employee[] {
     return this.employees;      
 }
 
+@HttpCode(200)
 getEmployeeById(id: number){
     console.log("ID in service:", id);
     let ans= this.employees.find(emp => emp.id === id);
     console.log("Employee found:", ans);
     return ans
+}
+
+addEmployee(employee: Employee): Employee {
+  this.employees.push(employee);
+  return employee;
+}
+
+updateEmployee(id: number, data: Partial<Employee>) {
+  const employee = this.getEmployeeById(id);
+  if (!employee) return null;
+
+  Object.assign(employee, data);
+  return employee;
+}
+
+deleteEmployee(id: number) {
+  this.employees = this.employees.filter(emp => emp.id !== id);
+  return { message: 'Employee deleted successfully' };
 }
 
 }
